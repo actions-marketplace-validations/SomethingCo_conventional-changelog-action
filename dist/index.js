@@ -78,7 +78,7 @@ function createChangelog(commits) {
         const commitsList = grouped[type]
             .map(commit => `- ${commit.subject || commit.header}`)
             .join('\n');
-        return `### ${emoji} ${title}\n${commitsList}`;
+        return `### ${emoji} ${title}:\n${commitsList}`;
     })
         .join(`\n\n`);
 }
