@@ -3,6 +3,7 @@ import * as github from '@actions/github'
 import { DateTime } from 'luxon'
 import parser from 'conventional-commits-parser'
 import groupBy from 'lodash/groupBy'
+import capitalize from 'lodash/capitalize'
 
 const emojis: Record<string, string> = {
   feat: `:sparkles:`,
@@ -39,8 +40,14 @@ function createChangelog(
     .map(type => {
       const title = titles[type] ?? 'Others'
       const emoji = emojis[type] ?? ':question:'
+
       const commitsList = grouped[type]
-        .map(commit => `- ${commit.subject || commit.header}`)
+        .map(commit => {
+          const message = capitalize(commit.subject || commit.header || '')
+            .replace('[ci skip]', '')
+            .trim()
+          return `- ${message}`
+        })
         .join('\n')
 
       return `### ${emoji} ${title}:\n${commitsList}`
