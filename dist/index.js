@@ -45,37 +45,74 @@ const luxon_1 = __webpack_require__(8811);
 const conventional_commits_parser_1 = __importDefault(__webpack_require__(1655));
 const groupBy_1 = __importDefault(__webpack_require__(611));
 const capitalize_1 = __importDefault(__webpack_require__(3622));
-const emojis = {
-    feat: `:sparkles:`,
-    fix: `:bug:`,
-    docs: `:books:`,
-    style: `:gem:`,
-    refactor: `:hammer:`,
-    perf: `:rocket:`,
-    test: `:rotating_light:`,
-    build: `:package:`,
-    ci: `:construction_worker:`,
-    chore: `:wrench:`
-};
-const titles = {
-    feat: `Features`,
-    fix: `Bug Fixes`,
-    docs: `Docs`,
-    style: `Styling`,
-    refactor: `Refactor`,
-    perf: `Performance`,
-    test: `Tests`,
-    build: `Build`,
-    ci: `CI`,
-    chore: `Chores`
+const types = {
+    feat: {
+        emoji: `:sparkles:`,
+        title: 'Features',
+        order: 0
+    },
+    fix: {
+        emoji: `:bug:`,
+        title: 'Bug Fixes',
+        order: 1
+    },
+    docs: {
+        emoji: `:books:`,
+        title: 'Docs',
+        order: 3
+    },
+    style: {
+        emoji: `:gem:`,
+        title: 'Styling',
+        order: 2
+    },
+    refactor: {
+        emoji: `:hammer:`,
+        title: 'Refactor',
+        order: 10
+    },
+    perf: {
+        emoji: `:rocket:`,
+        title: 'Performance Improvements',
+        order: 10
+    },
+    test: {
+        emoji: `:rotating_light:`,
+        title: 'Tests',
+        order: 10
+    },
+    build: {
+        emoji: `:package:`,
+        title: 'Build',
+        order: 10
+    },
+    ci: {
+        emoji: `:construction_worker:`,
+        title: 'CI',
+        order: 10
+    },
+    chore: {
+        emoji: `:wrench:`,
+        title: 'Chores',
+        order: 10
+    },
+    unknown: {
+        emoji: ':question:',
+        title: 'Others',
+        order: 10
+    }
 };
 function createChangelog(commits) {
     const grouped = groupBy_1.default(commits, commit => commit.type);
     return Object.keys(grouped)
+        .sort((a, b) => {
+        var _a, _b, _c, _d;
+        return (((_b = (_a = types[a !== null && a !== void 0 ? a : 'unknown']) === null || _a === void 0 ? void 0 : _a.order) !== null && _b !== void 0 ? _b : 10) -
+            ((_d = (_c = types[b !== null && b !== void 0 ? b : 'unknown']) === null || _c === void 0 ? void 0 : _c.order) !== null && _d !== void 0 ? _d : 10));
+    })
         .map(type => {
-        var _a, _b;
-        const title = (_a = titles[type]) !== null && _a !== void 0 ? _a : 'Others';
-        const emoji = (_b = emojis[type]) !== null && _b !== void 0 ? _b : ':question:';
+        var _a;
+        const map = (_a = types[type !== null && type !== void 0 ? type : 'unknown']) !== null && _a !== void 0 ? _a : types.unknown;
         const commitsList = grouped[type]
             .map(commit => {
             const message = capitalize_1.default(commit.subject || commit.header || '')
@@ -84,7 +121,7 @@ function createChangelog(commits) {
             return `- ${message}`;
         })
             .join('\n');
-        return `### ${emoji} ${title}:\n${commitsList}`;
+        return `### ${map.emoji} ${map.title}:\n${commitsList}`;
     })
         .join(`\n\n`);
 }

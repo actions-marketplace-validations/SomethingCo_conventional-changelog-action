@@ -5,30 +5,68 @@ import parser from 'conventional-commits-parser'
 import groupBy from 'lodash/groupBy'
 import capitalize from 'lodash/capitalize'
 
-const emojis: Record<string, string> = {
-  feat: `:sparkles:`,
-  fix: `:bug:`,
-  docs: `:books:`,
-  style: `:gem:`,
-  refactor: `:hammer:`,
-  perf: `:rocket:`,
-  test: `:rotating_light:`,
-  build: `:package:`,
-  ci: `:construction_worker:`,
-  chore: `:wrench:`
+interface TypeMap {
+  emoji: string
+  title: string
+  order: number
 }
 
-const titles: Record<string, string> = {
-  feat: `Features`,
-  fix: `Bug Fixes`,
-  docs: `Docs`,
-  style: `Styling`,
-  refactor: `Refactor`,
-  perf: `Performance`,
-  test: `Tests`,
-  build: `Build`,
-  ci: `CI`,
-  chore: `Chores`
+const types: Record<string, TypeMap> = {
+  feat: {
+    emoji: `:sparkles:`,
+    title: 'Features',
+    order: 0
+  },
+  fix: {
+    emoji: `:bug:`,
+    title: 'Bug Fixes',
+    order: 1
+  },
+  docs: {
+    emoji: `:books:`,
+    title: 'Docs',
+    order: 3
+  },
+  style: {
+    emoji: `:gem:`,
+    title: 'Styling',
+    order: 2
+  },
+  refactor: {
+    emoji: `:hammer:`,
+    title: 'Refactor',
+    order: 10
+  },
+  perf: {
+    emoji: `:rocket:`,
+    title: 'Performance Improvements',
+    order: 10
+  },
+  test: {
+    emoji: `:rotating_light:`,
+    title: 'Tests',
+    order: 10
+  },
+  build: {
+    emoji: `:package:`,
+    title: 'Build',
+    order: 10
+  },
+  ci: {
+    emoji: `:construction_worker:`,
+    title: 'CI',
+    order: 10
+  },
+  chore: {
+    emoji: `:wrench:`,
+    title: 'Chores',
+    order: 10
+  },
+  unknown: {
+    emoji: ':question:',
+    title: 'Others',
+    order: 10
+  }
 }
 
 function createChangelog(
@@ -37,10 +75,14 @@ function createChangelog(
   const grouped = groupBy(commits, commit => commit.type)
 
   return Object.keys(grouped)
+    .sort((a, b) => {
+      return (
+        (types[a ?? 'unknown']?.order ?? 10) -
+        (types[b ?? 'unknown']?.order ?? 10)
+      )
+    })
     .map(type => {
-      const title = titles[type] ?? 'Others'
-      const emoji = emojis[type] ?? ':question:'
-
+      const map = types[type ?? 'unknown'] ?? types.unknown
       const commitsList = grouped[type]
         .map(commit => {
           const message = capitalize(commit.subject || commit.header || '')
@@ -50,7 +92,7 @@ function createChangelog(
         })
         .join('\n')
 
-      return `### ${emoji} ${title}:\n${commitsList}`
+      return `### ${map.emoji} ${map.title}:\n${commitsList}`
     })
     .join(`\n\n`)
 }
