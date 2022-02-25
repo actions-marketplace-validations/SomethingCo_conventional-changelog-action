@@ -1,8 +1,9 @@
 name: 'Simple Conventional Changelog Action'
 description: 'Generate a changelog based on Conventional Commit history, without any configuration.'
 author: 'SomethingCo'
-icon: 'align-left'
-color: 'purple'
+branding:
+  icon: 'align-left'
+  color: 'purple'
 runs:
   using: 'node12'
   main: 'dist/index.js'
