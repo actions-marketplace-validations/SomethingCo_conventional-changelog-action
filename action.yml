@@ -1,5 +1,5 @@
-name: 'Conventional Changelog Action'
-description: 'Generate a changelog based on Conventional Commit history'
+name: 'Simple Conventional Changelog Action'
+description: 'Generate a changelog based on Conventional Commit history, without any configuration.'
 author: 'SomethingCo'
 runs:
   using: 'node12'
