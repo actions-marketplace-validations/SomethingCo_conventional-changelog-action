@@ -5,7 +5,9 @@ This action generates a changelog based on conventional commit history and updat
 ## Usage
 
 ```yaml
-- uses: '@somethingco/conventional-changelog-action'
+- uses: SomethingCo/conventional-changelog-action@latest
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+(`secrets.GITHUB_TOKEN` is added by GitHub, you don't need to do anything.)
